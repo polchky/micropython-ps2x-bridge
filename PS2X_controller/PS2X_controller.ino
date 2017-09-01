@@ -90,7 +90,7 @@ void loop() {
     ps2_connect();
     return;
   }
-  // set and send data
+  // set data
   set_s_data();
 
   request = false;

@@ -9,7 +9,7 @@ M_BUTTONS = ['PSB_SELECT', 'PSB_START']
 BUTTONS = L_BUTTONS + R_BUTTONS + M_BUTTONS
 
 class Controller:
-    def __init__(self, baud_rate, uart_channel = 2, max_time_ms = 50):
+    def __init__(self, baud_rate = 115200, uart_channel = 2, max_time_ms = 50):
         self.uart = machine.UART(2, baud_rate)
         self.uart.init(baud_rate, bits=8, parity=None, stop=1)
         self.max_time_ms = max_time_ms
@@ -39,6 +39,8 @@ class Controller:
     def update(self):
         message = []
         start = time.ticks_ms()
+        # ensure empty buffer
+        self.uart.read()
         # send request byte
         self.uart.write(bytes([0x00]))
         while(len(message) < 7):
@@ -56,6 +58,9 @@ class Controller:
         message[0] &= 127
         self._store_message(message)
         return True
+
+    def value(self, elt):
+        return self.commands[elt]
 
     def clicked(self, button):
         return not self.commands_prev[button] and self.commands[button]
